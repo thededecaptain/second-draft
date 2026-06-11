@@ -1,8 +1,8 @@
 const Footer = () => (
   <footer>
-    <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-8">
-      <div className="font-display text-[13px] font-medium">
-        <span className="text-muted-foreground">▸</span> seconddraft
+    <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-10">
+      <div className="font-display text-[14px] font-semibold text-foreground">
+        <span className="text-primary">●</span> seconddraft
       </div>
       <div className="flex items-center gap-6 text-[12px] text-muted-foreground">
         <span>© {new Date().getFullYear()}</span>
