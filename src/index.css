@@ -4,17 +4,24 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 93%;
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 93%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 48%;
-    --border: 0 0% 10%;
-    --radius: 0.25rem;
-    --hairline: 0 0% 10%;
+    --background: 48 20% 97%;
+    --foreground: 220 14% 16%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 14% 16%;
+    --primary: 24 65% 53%;
+    --primary-foreground: 48 30% 98%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 14% 16%;
+    --muted: 40 12% 92%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 24 65% 53%;
+    --accent-foreground: 48 30% 98%;
+    --border: 30 10% 88%;
+    --input: 30 10% 88%;
+    --ring: 24 65% 53%;
+    --radius: 0.5rem;
+    --hairline: 30 10% 88%;
+    --shadow-soft: 0 1px 2px hsl(220 14% 16% / 0.04), 0 8px 24px -8px hsl(220 14% 16% / 0.08);
   }
 }
 
@@ -26,23 +33,35 @@
   html,
   body {
     @apply bg-background text-foreground;
-    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+    font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(hsl(220 14% 16% / 0.025) 1px, transparent 1px);
+    background-size: 4px 4px;
   }
 }
 
 @layer utilities {
   .font-display {
-    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
-  .font-mono {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
+  .font-body {
+    font-family: "Inter", system-ui, sans-serif;
   }
   .micro-label {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-family: "Inter", system-ui, sans-serif;
     font-size: 11px;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
+    font-weight: 500;
+  }
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
   }
 }
