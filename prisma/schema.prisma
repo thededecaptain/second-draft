@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Tier {
+  SMB
+  ENTERPRISE
+}
+
+model Workspace {
+  id               String   @id @default(cuid())
+  slackTeamId      String   @unique @map("slack_team_id")
+  tier             Tier     @default(SMB)
+  /// Full Slack OAuth installation (tokens); required for multi-workspace runtime.
+  installationJson Json?    @map("installation_json")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  usageEvents UsageEvent[]
+  customerKey CustomerKey?
+
+  @@map("workspaces")
+}
+
+/// Per-user OAuth token for one-click "Send as me" (encrypted at rest).
+model UserToken {
+  id          String    @id @default(cuid())
+  teamId      String    @map("team_id")
+  slackUserId String    @map("slack_user_id")
+  ciphertext  String
+  keyVersion  Int       @map("key_version")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  revokedAt   DateTime? @map("revoked_at")
+
+  @@unique([teamId, slackUserId])
+  @@index([teamId, slackUserId])
+  @@map("user_tokens")
+}
+
+/// Per-rewrite usage for monthly per-workspace cost aggregation.
+model UsageEvent {
+  id           String   @id @default(cuid())
+  workspaceId  String   @map("workspace_id")
+  rewriteCount Int      @default(1) @map("rewrite_count")
+  inputTokens  Int      @map("input_tokens")
+  outputTokens Int      @map("output_tokens")
+  model        String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt])
+  @@map("usage_events")
+}
+
+/// Enterprise customer LLM key (ciphertext only; phase 2 management).
+model CustomerKey {
+  id          String   @id @default(cuid())
+  workspaceId String   @unique @map("workspace_id")
+  ciphertext  String
+  keyVersion  Int      @map("key_version")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("customer_keys")
+}

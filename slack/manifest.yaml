@@ -1,0 +1,53 @@
+# SecondDraft — Slack app manifest (source of truth for app config)
+# Create app: https://api.slack.com/apps → Create New App → From an app manifest → paste this file.
+#
+# After creation (not in manifest):
+#   1. Settings → Socket Mode → generate app-level token (connections:write) → SLACK_APP_TOKEN
+#   2. Settings → Basic Information → Signing Secret → SLACK_SIGNING_SECRET
+#   3. OAuth → Client ID / Client Secret → .env
+#   4. Reinstall after manifest scope changes → http://localhost:3000/slack/install
+#
+# Bot scopes (must match src/index.ts):
+#   commands — /draft, /seconddraft (copy/paste flow; no channel posting)
+
+_metadata:
+  major_version: 2
+  minor_version: 1
+
+display_information:
+  name: SecondDraft
+  description: Rewrite draft Slack messages in a chosen tone (Friendly, Direct, Formal) for your audience (teammate, manager, customer).
+  background_color: "#1a1a2e"
+
+features:
+  bot_user:
+    display_name: SecondDraft
+    always_online: false
+  slash_commands:
+    - command: /draft
+      url: https://example.com/slack/events
+      description: Rewrite a draft message for tone and audience
+      usage_hint: "[your draft text]"
+      should_escape: false
+    - command: /seconddraft
+      # Socket Mode delivers commands to your process; URL is a required placeholder.
+      url: https://example.com/slack/events
+      description: Rewrite a draft message for tone and audience
+      usage_hint: "[your draft text]"
+      should_escape: false
+
+oauth_config:
+  redirect_urls:
+    - http://localhost:3000/slack/oauth_redirect
+  scopes:
+    bot:
+      - commands
+
+settings:
+  # Required for ephemeral Block Kit buttons and selects.
+  interactivity:
+    is_enabled: true
+    request_url: https://example.com/slack/events
+  org_deploy_enabled: false
+  socket_mode_enabled: true
+  token_rotation_enabled: false
