@@ -23,14 +23,15 @@ const Hero = () => (
         </div>
 
         <h1 className="font-display text-[44px] font-semibold leading-[1.02] tracking-[-0.03em] text-foreground sm:text-[56px] md:text-[68px]">
-          Say it right
+          Say it the way
           <br />
-          the first time<span className="text-primary">.</span>
+          you meant to<span className="text-primary">.</span>
         </h1>
 
         <p className="mt-7 max-w-md text-[17px] leading-relaxed text-muted-foreground">
-          SecondDraft rewrites your Slack messages to match your tone and
-          relationship — so you always come across the way you mean to.
+          SecondDraft helps you find the right tone for every message. One
+          shortcut in Slack, and your rough draft becomes clear, confident, and
+          precisely on point.
         </p>
 
         <div id="get-started" className="mt-9 flex flex-wrap items-center gap-3">
@@ -52,11 +53,11 @@ const Hero = () => (
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-1 w-1 rounded-full bg-foreground/40" />
-            Works in any Slack workspace
+            Works in any workspace
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="h-1 w-1 rounded-full bg-foreground/40" />
-            Messages aren't stored
+            Your messages stay private
           </span>
         </div>
       </div>
