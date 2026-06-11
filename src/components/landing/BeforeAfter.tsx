@@ -23,9 +23,9 @@ const samples = [
 const BeforeAfter = () => (
   <section id="examples" className="border-b border-hairline/70 bg-surface/40">
     <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-      <div className="mb-3 micro-label">What it looks like in practice</div>
+      <div className="mb-3 micro-label">How it works</div>
       <h2 className="mb-14 max-w-2xl font-display text-3xl font-semibold tracking-tight text-foreground md:text-[40px] md:leading-[1.1]">
-        Same intent. Sharper delivery<span className="text-primary">.</span>
+        Your idea. Their understanding<span className="text-primary">.</span>
       </h2>
 
       <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline md:grid-cols-3">
