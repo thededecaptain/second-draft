@@ -1,7 +1,7 @@
 node_modules/
 dist/
-landing/node_modules/
-landing/dist/
+slack-app/node_modules/
+slack-app/dist/
 .env
 .env.local
 *.log

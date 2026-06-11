@@ -1,6 +1,8 @@
-# SecondDraft — local setup walkthrough
+# SecondDraft Slack app — local setup
 
-Follow these in order. Pause after each section and fill in `.env`.
+Run all commands from the **`slack-app/`** directory. The landing page at repo root is deployed separately via Lovable.
+
+Follow these in order. Pause after each section and fill in `slack-app/.env`.
 
 ## Checklist
 

@@ -13,7 +13,7 @@ const Hero = () => (
         </p>
         <div id="get-started" className="mt-10 flex items-center gap-4">
           <a
-            href="https://github.com/thededecaptain/second-draft#setup"
+            href="https://github.com/thededecaptain/second-draft/blob/main/slack-app/SETUP.md"
             className="inline-flex h-10 items-center gap-2 bg-primary px-5 text-[13px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
           >
             Get started
