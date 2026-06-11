@@ -1,7 +1,6 @@
 import Nav from "@/components/landing/Nav";
 import Hero from "@/components/landing/Hero";
 import BeforeAfter from "@/components/landing/BeforeAfter";
-import Features from "@/components/landing/Features";
 import Footer from "@/components/landing/Footer";
 
 const Index = () => (
@@ -10,7 +9,6 @@ const Index = () => (
     <main>
       <Hero />
       <BeforeAfter />
-      <Features />
     </main>
     <Footer />
   </div>
