@@ -2,6 +2,26 @@
 
 Slack app that rewrites a draft message in a chosen **tone** (Friendly, Direct, Formal) for a **relationship** context (teammate, manager, customer).
 
+## Repository layout
+
+| Path | What it is |
+|------|------------|
+| **`/`** (root) | Bolt Slack app — `/draft`, rewrite, Send as me |
+| **`landing/`** | Marketing site (Lovable design, landing page only) |
+
+## Landing page
+
+The Lovable-designed marketing site lives in `landing/` — no dashboard, no Supabase.
+
+```bash
+cd landing
+npm install
+npm run dev    # http://localhost:8080
+npm run build  # static files in landing/dist/
+```
+
+Deploy `landing/dist/` to any static host (Vercel, Netlify, Cloudflare Pages).
+
 ## Architecture
 
 ### Tier model
