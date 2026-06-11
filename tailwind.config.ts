@@ -6,15 +6,16 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ["'Plus Jakarta Sans'", "'Inter'", "system-ui", "sans-serif"],
-        sans: ["'Plus Jakarta Sans'", "'Inter'", "system-ui", "sans-serif"],
-        body: ["'Inter'", "system-ui", "sans-serif"],
+        display: ["'Sora'", "'Manrope Variable'", "system-ui", "sans-serif"],
+        sans: ["'Manrope Variable'", "'Manrope'", "system-ui", "sans-serif"],
+        body: ["'Manrope Variable'", "'Manrope'", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         hairline: "hsl(var(--hairline))",
+        surface: "hsl(var(--surface))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
