@@ -20,7 +20,7 @@ const Nav = () => (
         </a>
         <a
           href={SLACK_INSTALL_URL}
-          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-foreground px-4 text-[13px] font-semibold text-background transition-all hover:opacity-90"
+          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-[13px] font-semibold text-primary-foreground shadow-glow transition-all hover:-translate-y-px hover:opacity-95"
         >
           Add to Slack
           <span aria-hidden>→</span>
