@@ -4,7 +4,7 @@
  * the "Add to Slack" button a real one-click OAuth install.
  */
 export const SLACK_INSTALL_URL =
-  "https://github.com/thededecaptain/second-draft/blob/main/slack-app/SETUP.md";
+  "https://second-draft-production.up.railway.app/slack/install";
 
 export const SELF_HOST_URL =
   "https://github.com/thededecaptain/second-draft/blob/main/slack-app/SETUP.md";

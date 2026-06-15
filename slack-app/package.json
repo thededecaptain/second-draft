@@ -5,7 +5,7 @@
   "description": "Slack app that rewrites draft messages in a chosen tone and relationship context",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "db:generate": "prisma generate",
@@ -22,11 +22,11 @@
     "@prisma/client": "^6.19.3",
     "@slack/bolt": "^4.7.3",
     "@slack/oauth": "^3.0.5",
+    "prisma": "^6.19.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
-    "prisma": "^6.19.3",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   }

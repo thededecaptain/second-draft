@@ -1,0 +1,10 @@
+# Railway/Nixpacks: install devDependencies during build even when
+# NODE_ENV=production (TypeScript + Prisma CLI are required to compile).
+[phases.install]
+cmds = ["npm ci --include=dev"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm run start"
