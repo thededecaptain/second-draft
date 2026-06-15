@@ -12,6 +12,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "check-env": "node scripts/check-env.mjs",
+    "usage-report": "node scripts/usage-report.mjs",
     "postinstall": "prisma generate"
   },
   "engines": {

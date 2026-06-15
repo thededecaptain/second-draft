@@ -1,0 +1,40 @@
+_metadata:
+  major_version: 2
+  minor_version: 2
+
+display_information:
+  name: SecondDraft
+  description: Rewrite draft Slack messages in a chosen tone (Friendly, Direct, Formal) for your audience (teammate, manager, customer).
+  background_color: "#1a1a2e"
+
+features:
+  bot_user:
+    display_name: SecondDraft
+    always_online: true
+  slash_commands:
+    - command: /draft
+      url: https://second-draft-production.up.railway.app/slack/events
+      description: Rewrite a draft message for tone and audience
+      usage_hint: "[your draft text]"
+      should_escape: false
+    - command: /seconddraft
+      url: https://second-draft-production.up.railway.app/slack/events
+      description: Rewrite a draft message for tone and audience
+      usage_hint: "[your draft text]"
+      should_escape: false
+
+oauth_config:
+  redirect_urls:
+    - https://second-draft-production.up.railway.app/slack/oauth_redirect
+    - https://second-draft-production.up.railway.app/slack/oauth/callback
+  scopes:
+    bot:
+      - commands
+
+settings:
+  interactivity:
+    is_enabled: true
+    request_url: https://second-draft-production.up.railway.app/slack/events
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
