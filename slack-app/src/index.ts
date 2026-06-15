@@ -45,6 +45,23 @@ const app = new App({
         res.end("ok");
       },
     },
+    {
+      path: "/health/db",
+      method: "GET",
+      handler: async (_req, res) => {
+        try {
+          const { prisma } = await import("./db/client.js");
+          await prisma.$queryRaw`SELECT 1 AS ok`;
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: true }));
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Database unreachable";
+          safeLog("error", "Database health check failed", { error: message });
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: false, error: message }));
+        }
+      },
+    },
   ],
 });
 
