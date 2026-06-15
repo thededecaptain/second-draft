@@ -4,17 +4,47 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 93%;
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 93%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 48%;
-    --border: 0 0% 10%;
-    --radius: 0.25rem;
-    --hairline: 0 0% 10%;
+    /* Stripe Cloud palette */
+    --background: 0 0% 100%;
+    --foreground: 214 71% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 214 71% 15%;
+    --surface: 214 50% 97%;
+    --primary: 245 100% 68%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214 50% 97%;
+    --secondary-foreground: 214 71% 15%;
+    --muted: 214 32% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 245 100% 68%;
+    --accent-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 245 100% 68%;
+    --radius: 0.75rem;
+    --hairline: 214 32% 91%;
+
+    --shadow-soft:
+      0 1px 1px hsl(214 71% 15% / 0.04),
+      0 4px 14px -4px hsl(214 71% 15% / 0.06);
+    --shadow-lift:
+      0 1px 2px hsl(214 71% 15% / 0.05),
+      0 12px 32px -10px hsl(214 71% 15% / 0.12),
+      0 24px 60px -24px hsl(245 100% 68% / 0.18);
+    --shadow-glow:
+      0 8px 24px -6px hsl(245 100% 68% / 0.35);
+
+    --gradient-hero: radial-gradient(
+        1100px 600px at 0% -10%,
+        hsl(245 100% 68% / 0.14),
+        transparent 60%
+      ),
+      radial-gradient(
+        900px 500px at 100% 0%,
+        hsl(190 95% 70% / 0.12),
+        transparent 55%
+      ),
+      linear-gradient(180deg, hsl(214 50% 99%), hsl(0 0% 100%));
   }
 }
 
@@ -26,23 +56,42 @@
   html,
   body {
     @apply bg-background text-foreground;
-    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+    font-family: "Manrope Variable", "Manrope", system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv11";
   }
 }
 
 @layer utilities {
   .font-display {
-    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-family: "Sora", "Manrope Variable", system-ui, sans-serif;
+    letter-spacing: -0.025em;
   }
-  .font-mono {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
+  .font-body {
+    font-family: "Manrope Variable", "Manrope", system-ui, sans-serif;
   }
   .micro-label {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-family: "Manrope Variable", "Manrope", system-ui, sans-serif;
     font-size: 11px;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
+    font-weight: 600;
+    color: hsl(var(--muted-foreground));
+  }
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-lift {
+    box-shadow: var(--shadow-lift);
+  }
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  .bg-hero-gradient {
+    background-image: var(--gradient-hero);
+  }
+  .bg-surface {
+    background-color: hsl(var(--surface));
   }
 }
