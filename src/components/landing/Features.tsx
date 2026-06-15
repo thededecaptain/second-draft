@@ -7,7 +7,7 @@ const features = [
   {
     n: "004",
     title: "Private",
-    body: "Rewrites are ephemeral — only you see them. Message bodies are never stored or logged.",
+    body: "No pasting drafts into another tab. Rewrites are ephemeral — only you see them — and message bodies are never stored or logged.",
   },
   {
     n: "005",

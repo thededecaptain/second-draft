@@ -1,18 +1,26 @@
 # SecondDraft — Slack app manifest (source of truth for app config)
 # Create app: https://api.slack.com/apps → Create New App → From an app manifest → paste this file.
 #
+# IMPORTANT — replace every YOUR-DOMAIN below with your deployed host
+# (e.g. second-draft-production.up.railway.app) before pasting.
+# For local dev, use your tunnel URL (cloudflared / ngrok) instead.
+#
 # After creation (not in manifest):
-#   1. Settings → Socket Mode → generate app-level token (connections:write) → SLACK_APP_TOKEN
-#   2. Settings → Basic Information → Signing Secret → SLACK_SIGNING_SECRET
-#   3. OAuth → Client ID / Client Secret → .env
-#   4. Reinstall after manifest scope changes → http://localhost:3000/slack/install
+#   1. Settings → Basic Information → Signing Secret → SLACK_SIGNING_SECRET
+#   2. OAuth → Client ID / Client Secret → .env
+#   3. Reinstall after manifest scope changes → https://YOUR-DOMAIN/slack/install
+#
+# HTTP mode (Marketplace-eligible; Socket Mode apps cannot be listed):
+#   - Slash commands + interactivity → POST https://YOUR-DOMAIN/slack/events
+#   - Workspace install OAuth        → https://YOUR-DOMAIN/slack/oauth_redirect
+#   - Per-user "send as me" OAuth    → https://YOUR-DOMAIN/slack/oauth/callback
 #
 # Bot scopes (must match src/index.ts):
 #   commands — /draft, /seconddraft (copy/paste flow; no channel posting)
 
 _metadata:
   major_version: 2
-  minor_version: 1
+  minor_version: 2
 
 display_information:
   name: SecondDraft
@@ -22,23 +30,23 @@ display_information:
 features:
   bot_user:
     display_name: SecondDraft
-    always_online: false
+    always_online: true
   slash_commands:
     - command: /draft
-      url: https://example.com/slack/events
+      url: https://YOUR-DOMAIN/slack/events
       description: Rewrite a draft message for tone and audience
       usage_hint: "[your draft text]"
       should_escape: false
     - command: /seconddraft
-      # Socket Mode delivers commands to your process; URL is a required placeholder.
-      url: https://example.com/slack/events
+      url: https://YOUR-DOMAIN/slack/events
       description: Rewrite a draft message for tone and audience
       usage_hint: "[your draft text]"
       should_escape: false
 
 oauth_config:
   redirect_urls:
-    - http://localhost:3000/slack/oauth_redirect
+    - https://YOUR-DOMAIN/slack/oauth_redirect
+    - https://YOUR-DOMAIN/slack/oauth/callback
   scopes:
     bot:
       - commands
@@ -47,7 +55,7 @@ settings:
   # Required for ephemeral Block Kit buttons and selects.
   interactivity:
     is_enabled: true
-    request_url: https://example.com/slack/events
+    request_url: https://YOUR-DOMAIN/slack/events
   org_deploy_enabled: false
-  socket_mode_enabled: true
+  socket_mode_enabled: false
   token_rotation_enabled: false

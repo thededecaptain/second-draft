@@ -10,13 +10,14 @@ import {
 
 const config = loadConfig();
 
+// HTTP mode (no Socket Mode): Slack delivers commands/interactivity to
+// POST /slack/events. Bolt's OAuth installer serves GET /slack/install and
+// GET /slack/oauth_redirect for multi-workspace installs.
 const app = new App({
   signingSecret: config.SLACK_SIGNING_SECRET,
   clientId: config.SLACK_CLIENT_ID,
   clientSecret: config.SLACK_CLIENT_SECRET,
   stateSecret: config.SLACK_STATE_SECRET,
-  appToken: config.SLACK_APP_TOKEN,
-  socketMode: true,
   logLevel: config.NODE_ENV === "development" ? LogLevel.DEBUG : LogLevel.INFO,
   installerOptions: {
     directInstall: true,
@@ -29,6 +30,14 @@ const app = new App({
       method: "GET",
       handler: createUserOAuthCallbackHandler(config),
     },
+    {
+      path: "/health",
+      method: "GET",
+      handler: (_req, res) => {
+        res.writeHead(200, { "Content-Type": "text/plain" });
+        res.end("ok");
+      },
+    },
   ],
 });
 
@@ -37,5 +46,5 @@ registerHandlers(app, config);
 (async () => {
   const port = config.PORT;
   await app.start(port);
-  safeLog("info", "SecondDraft is running", { port, socketMode: true });
+  safeLog("info", "SecondDraft is running", { port, mode: "http" });
 })();

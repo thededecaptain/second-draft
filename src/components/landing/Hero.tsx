@@ -1,3 +1,5 @@
+import { SLACK_INSTALL_URL } from "@/lib/links";
+
 const Hero = () => (
   <section className="border-b border-hairline">
     <div className="mx-auto grid max-w-6xl grid-cols-1 md:grid-cols-2">
@@ -9,14 +11,16 @@ const Hero = () => (
           Draft<span className="text-muted-foreground">.</span>
         </h1>
         <p className="mt-8 max-w-md text-base text-muted-foreground md:text-lg">
-          Rewrite any Slack message in the right tone. In one command.
+          Stop rewriting that message for the fifth time. Type{" "}
+          <span className="font-mono text-foreground">/draft</span>, pick a tone — friendly,
+          direct, or formal — and send something that lands right. Without leaving Slack.
         </p>
         <div id="get-started" className="mt-10 flex items-center gap-4">
           <a
-            href="https://github.com/thededecaptain/second-draft/blob/main/slack-app/SETUP.md"
+            href={SLACK_INSTALL_URL}
             className="inline-flex h-10 items-center gap-2 bg-primary px-5 text-[13px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
           >
-            Get started
+            Add to Slack
             <span>→</span>
           </a>
           <a

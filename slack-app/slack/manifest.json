@@ -1,7 +1,7 @@
 {
   "_metadata": {
     "major_version": 2,
-    "minor_version": 1
+    "minor_version": 2
   },
   "display_information": {
     "name": "SecondDraft",
@@ -11,19 +11,19 @@
   "features": {
     "bot_user": {
       "display_name": "SecondDraft",
-      "always_online": false
+      "always_online": true
     },
     "slash_commands": [
       {
         "command": "/draft",
-        "url": "https://example.com/slack/events",
+        "url": "https://YOUR-DOMAIN/slack/events",
         "description": "Rewrite a draft message for tone and audience",
         "usage_hint": "[your draft text]",
         "should_escape": false
       },
       {
         "command": "/seconddraft",
-        "url": "https://example.com/slack/events",
+        "url": "https://YOUR-DOMAIN/slack/events",
         "description": "Rewrite a draft message for tone and audience",
         "usage_hint": "[your draft text]",
         "should_escape": false
@@ -32,7 +32,8 @@
   },
   "oauth_config": {
     "redirect_urls": [
-      "http://localhost:3000/slack/oauth_redirect"
+      "https://YOUR-DOMAIN/slack/oauth_redirect",
+      "https://YOUR-DOMAIN/slack/oauth/callback"
     ],
     "scopes": {
       "bot": [
@@ -43,10 +44,10 @@
   "settings": {
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://example.com/slack/events"
+      "request_url": "https://YOUR-DOMAIN/slack/events"
     },
     "org_deploy_enabled": false,
-    "socket_mode_enabled": true,
+    "socket_mode_enabled": false,
     "token_rotation_enabled": false
   }
 }

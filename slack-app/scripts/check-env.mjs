@@ -16,7 +16,6 @@ const required = [
   "SLACK_CLIENT_ID",
   "SLACK_CLIENT_SECRET",
   "SLACK_STATE_SECRET",
-  "SLACK_APP_TOKEN",
   "ANTHROPIC_API_KEY",
 ];
 
@@ -62,4 +61,5 @@ if (placeholders.length) {
 
 console.log("OK — all required env vars are set.");
 console.log("Next: npx prisma db push && npm run dev");
-console.log("Then open http://localhost:3000/slack/install");
+console.log("Then start a tunnel (HTTP mode needs a public URL in dev) and");
+console.log("open https://<your-tunnel-domain>/slack/install");

@@ -6,7 +6,6 @@ const envSchema = z.object({
   SLACK_CLIENT_ID: z.string().min(1),
   SLACK_CLIENT_SECRET: z.string().min(1),
   SLACK_STATE_SECRET: z.string().min(1),
-  SLACK_APP_TOKEN: z.string().min(1),
   ANTHROPIC_API_KEY: z.string().min(1),
   ANTHROPIC_MODEL: z.string().min(1).default("claude-sonnet-4-20250514"),
   PORT: z.coerce.number().int().positive().default(3000),

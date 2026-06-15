@@ -11,7 +11,7 @@ const Nav = () => (
           how it works
         </a>
         <a href="#get-started" className="transition-colors hover:text-foreground">
-          get started →
+          add to slack →
         </a>
       </div>
     </div>

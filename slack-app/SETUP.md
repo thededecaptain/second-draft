@@ -1,17 +1,20 @@
-# SecondDraft Slack app — local setup
+# SecondDraft Slack app — local setup (self-host)
 
-Run all commands from the **`slack-app/`** directory. The landing page at repo root is deployed separately via Lovable.
+Run all commands from the **`slack-app/`** directory. The landing page at repo root is deployed separately via Lovable. For production hosting, see **[DEPLOY.md](./DEPLOY.md)**.
+
+The app runs in **HTTP mode** (no Socket Mode): Slack sends requests to public HTTPS URLs, so local dev needs a tunnel (cloudflared or ngrok).
 
 Follow these in order. Pause after each section and fill in `slack-app/.env`.
 
 ## Checklist
 
 - [ ] Postgres `DATABASE_URL`
-- [ ] Slack app created (Socket Mode + OAuth + `/seconddraft`)
+- [ ] Tunnel running (cloudflared/ngrok) → public HTTPS URL
+- [ ] Slack app created from manifest (request URLs = your tunnel)
 - [ ] `.env` filled (run `node scripts/check-env.mjs`)
 - [ ] `npx prisma db push`
 - [ ] `npm run dev`
-- [ ] Install: http://localhost:3000/slack/install
+- [ ] Install: https://YOUR-TUNNEL/slack/install
 - [ ] Test: `/seconddraft your draft here`
 
 ---
@@ -38,16 +41,38 @@ npx prisma db push
 
 ---
 
-## 2. Slack app (from manifest)
+## 2. Tunnel (dev only)
+
+HTTP mode means Slack must reach your machine. Start a tunnel to port 3000:
+
+```bash
+# Cloudflare (free, no account needed)
+cloudflared tunnel --url http://localhost:3000
+
+# or ngrok
+ngrok http 3000
+```
+
+Copy the public HTTPS URL it prints — that is `YOUR-TUNNEL` below. Put it in `.env`:
+
+```
+PUBLIC_BASE_URL=https://YOUR-TUNNEL
+```
+
+Note: free trycloudflare/ngrok URLs change on every restart — when they do, update `PUBLIC_BASE_URL` and the Slack request URLs (step 3).
+
+---
+
+## 3. Slack app (from manifest)
 
 Config lives in code: **`slack/manifest.yaml`** (or `slack/manifest.json`).
 
 1. Go to https://api.slack.com/apps → **Create New App** → **From an app manifest**.
 2. Pick your dev workspace.
-3. Paste the contents of `slack/manifest.yaml` (or upload JSON).
+3. Paste the contents of `slack/manifest.yaml` with every `YOUR-DOMAIN` replaced by your tunnel host.
 4. Review and **Create**.
 
-The manifest sets: app name, Socket Mode, OAuth redirect, bot scope (`commands` only), `/draft` + `/seconddraft`, and interactivity (for buttons and modals).
+The manifest sets: app name, request URLs, OAuth redirects, bot scope (`commands` only), `/draft` + `/seconddraft`, and interactivity (for buttons and modals).
 
 ### After create — copy secrets to `.env`
 
@@ -58,17 +83,16 @@ These are **not** in the manifest; grab them once from the Slack UI:
 | **Basic Information → Signing Secret** | `SLACK_SIGNING_SECRET` |
 | **OAuth & Permissions → Client ID** | `SLACK_CLIENT_ID` |
 | **OAuth & Permissions → Client Secret** | `SLACK_CLIENT_SECRET` |
-| **Socket Mode → Generate app-level token** (`connections:write`) | `SLACK_APP_TOKEN` |
 
-(`SLACK_STATE_SECRET` is already in your `.env`.)
+(`SLACK_STATE_SECRET` is already in your `.env`. No app-level token is needed — that was a Socket Mode requirement.)
 
 ### Install to workspace (after server runs)
 
-You will use http://localhost:3000/slack/install once `npm run dev` is up.
+You will use https://YOUR-TUNNEL/slack/install once `npm run dev` is up.
 
 ---
 
-## 3. Anthropic
+## 4. Anthropic
 
 1. https://console.anthropic.com → API keys → create key.
 2. `ANTHROPIC_API_KEY=sk-ant-...` in `.env`.
@@ -77,14 +101,14 @@ Optional: change `ANTHROPIC_MODEL` if your account uses a different model ID.
 
 ---
 
-## 4. Validate and run
+## 5. Validate and run
 
 ```bash
 node scripts/check-env.mjs   # all required vars set
 npm run dev
 ```
 
-In browser: **http://localhost:3000/slack/install** → authorize.
+In browser (tunnel must be running): **https://YOUR-TUNNEL/slack/install** → authorize.
 
 In Slack:
 
@@ -96,19 +120,16 @@ Pick tone + relationship → **Rewrite** → select the code block, copy, and pa
 
 Optional **one-click send** (per-user OAuth, posts as you with no APP badge):
 
-1. Set in `.env`:
-   - `LOCAL_ENVELOPE_MASTER_KEY` — `openssl rand -hex 32`
-   - `PUBLIC_BASE_URL` — public HTTPS URL (ngrok or Cloudflare Tunnel in dev)
-2. In Slack app **OAuth & Permissions**, add redirect URL:
-   - `{PUBLIC_BASE_URL}/slack/oauth/callback`
-3. Restart `npm run dev`, run `/draft` again, click **⚡ Enable one-click send**, approve on slack.com once.
-4. Future rewrites show **Send as me** / **Edit & send**.
+1. Set `LOCAL_ENVELOPE_MASTER_KEY` in `.env` — `openssl rand -hex 32`
+   (`PUBLIC_BASE_URL` is already set from step 2; the `/slack/oauth/callback` redirect URL is already in the manifest).
+2. Restart `npm run dev`, run `/draft` again, click **⚡ Enable one-click send**, approve on slack.com once.
+3. Future rewrites show **Send as me** / **Edit & send**.
 
 Workspace install stays `commands`-only; user `chat:write` is granted individually on demand.
 
 ---
 
-## 5. Verify (optional)
+## 6. Verify (optional)
 
 ```bash
 npx prisma studio
@@ -127,4 +148,5 @@ npx prisma studio
 | Prisma connection error | Check `DATABASE_URL`, SSL (`?sslmode=require` on cloud DBs) |
 | OAuth redirect mismatch | Redirect URL must match Slack app exactly |
 | `/seconddraft` missing | Reinstall app; confirm slash command exists |
+| `dispatch_failed` on slash command | Tunnel down or request URL stale — restart tunnel, update URLs in Slack app settings |
 | Rewrite API error | Confirm Anthropic key and model |
