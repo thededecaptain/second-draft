@@ -1,66 +1,152 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-const DRAFT = "hey can u fix the bug asap pls its blocking";
-const REWRITTEN =
-  "Hi there! I wanted to check in on that bug — could you let me know where things stand? It's currently blocking the team and I'd appreciate an update when you get a chance.";
+type Scenario = {
+  title: string;
+  draft: string;
+  rewritten: string;
+  tone: "Friendly" | "Direct" | "Formal";
+  relationship: "Teammate" | "Manager" | "Customer";
+  channel: string;
+  incoming: { name: string; initials: string; avatarClass: string; time: string; body: string };
+};
 
-const TONES = ["Friendly", "Direct", "Formal"] as const;
-const RELATIONSHIPS = ["Teammate", "Manager", "Customer"] as const;
-const SELECTED_TONE = "Friendly";
-const SELECTED_REL = "Customer";
+const SCENARIOS: Scenario[] = [
+  {
+    title: "Prod is down",
+    draft: "omg the house is burning down, this customer will kick us in the ass",
+    rewritten:
+      "We have a critical customer issue that needs immediate attention. I'm ready to help resolve it — what do you need from me?",
+    tone: "Direct",
+    relationship: "Teammate",
+    channel: "incidents",
+    incoming: {
+      name: "Priya",
+      initials: "P",
+      avatarClass: "bg-[#E8912D] text-white",
+      time: "9:23 AM",
+      body: "Heads up — Acme just pinged us, checkout is throwing 500s in prod. Who's around?",
+    },
+  },
+  {
+    title: "Deadline panic",
+    draft: "omg we ship friday and i haven't started the report lol i think we're cooked",
+    rewritten:
+      "Quick heads up: the Friday report is tighter than I'd like. Could we align on scope for 10 minutes so we land it on time?",
+    tone: "Formal",
+    relationship: "Manager",
+    channel: "team-leads",
+    incoming: {
+      name: "Marcus",
+      initials: "M",
+      avatarClass: "bg-[#1264A3] text-white",
+      time: "9:14 AM",
+      body: "How's the Q3 report coming? Want to make sure we're on track for Friday's review.",
+    },
+  },
+  {
+    title: "Passive-aggressive coworker",
+    draft: "dude steve hasn't answered my slack in 3 days, is he even alive",
+    rewritten:
+      "Hey Steve! Just bumping this up in case it got buried — would love your take when you get a sec. No rush at all.",
+    tone: "Friendly",
+    relationship: "Teammate",
+    channel: "design-eng",
+    incoming: {
+      name: "Steve",
+      initials: "S",
+      avatarClass: "bg-[#8E44AD] text-white",
+      time: "Monday",
+      body: "ok ttyl 👋",
+    },
+  },
+  {
+    title: "Vague client ask",
+    draft: "can u just make the thing better??",
+    rewritten:
+      "Hi! I'd love to refine the current direction — could you share a bit more on what 'better' looks like for you? Happy to jump on a quick call too.",
+    tone: "Friendly",
+    relationship: "Customer",
+    channel: "acme-coop",
+    incoming: {
+      name: "Dana (Acme)",
+      initials: "D",
+      avatarClass: "bg-[#D93F4B] text-white",
+      time: "9:31 AM",
+      body: "took a look at the draft — it's fine but can it just be… better? you know what I mean",
+    },
+  },
+  {
+    title: "Asking for a raise",
+    draft: "sooo... been here 2 yrs and i'm still making intern money?? help",
+    rewritten:
+      "I'd like to set up time to revisit my compensation. I've taken on meaningful scope over the past two years and would value a conversation about leveling.",
+    tone: "Formal",
+    relationship: "Manager",
+    channel: "DM with Alex",
+    incoming: {
+      name: "Alex",
+      initials: "A",
+      avatarClass: "bg-[#2EB67D] text-white",
+      time: "9:02 AM",
+      body: "Got 15 mins later this week to sync on goals?",
+    },
+  },
+  {
+    title: "Ghosted invoice",
+    draft: "bruh this client dipped on the invoice for 2 months, send the goons",
+    rewritten:
+      "Hi — following up on invoice #1042, now 60 days overdue. Could you confirm a payment date this week? Happy to resend the invoice if helpful.",
+    tone: "Direct",
+    relationship: "Customer",
+    channel: "billing",
+    incoming: {
+      name: "Nadia (Finance)",
+      initials: "N",
+      avatarClass: "bg-[#0F766E] text-white",
+      time: "9:40 AM",
+      body: "FYI invoice #1042 is still outstanding — 60 days now. Can someone follow up?",
+    },
+  },
+];
 
-// Timeline (ms from loop start)
-const T = {
-  startTyping: 500,
-  perChar: 26,
-  get draftDone() {
-    return this.startTyping + ("/draft " + DRAFT).length * this.perChar;
-  },
-  get showDraftCard() {
-    return this.draftDone + 350;
-  },
-  get pickTone() {
-    return this.showDraftCard + 900;
-  },
-  get pickRel() {
-    return this.pickTone + 700;
-  },
-  get clickRewrite() {
-    return this.pickRel + 700;
-  },
-  get rewriting() {
-    return this.clickRewrite + 200;
-  },
-  get showRewriteCard() {
-    return this.rewriting + 1300;
-  },
-  get clickSend() {
-    return this.showRewriteCard + 1600;
-  },
-  get sent() {
-    return this.clickSend + 400;
-  },
-  get loop() {
-    return this.sent + 2600;
-  },
+const PER_CHAR = 22;
+const START_TYPING = 600;
+
+const buildTimes = (draft: string) => {
+  const startTyping = START_TYPING;
+  const draftDone = startTyping + ("/draft " + draft).length * PER_CHAR;
+  const showDraftCard = draftDone + 500;
+  const pickTone = showDraftCard + 1800;
+  const pickRel = pickTone + 1200;
+  const clickRewrite = pickRel + 1200;
+  const rewriting = clickRewrite + 250;
+  const showRewriteCard = rewriting + 1500;
+  const clickSend = showRewriteCard + 5000;
+  const sent = clickSend + 450;
+  return { startTyping, draftDone, showDraftCard, pickTone, pickRel, clickRewrite, rewriting, showRewriteCard, clickSend, sent };
 };
 
 const SeeItInAction = () => {
+  const [scenarioIndex, setScenarioIndex] = useState(0);
   const [t, setT] = useState(0);
   const [paused, setPaused] = useState(false);
   const startRef = useRef<number>(performance.now());
   const rafRef = useRef<number>();
 
+  const scenario = SCENARIOS[scenarioIndex];
+  const fullTyping = "/draft " + scenario.draft;
+  const times = useMemo(() => buildTimes(scenario.draft), [scenario.draft]);
+
+  useEffect(() => {
+    startRef.current = performance.now();
+    setT(0);
+  }, [scenarioIndex]);
+
   useEffect(() => {
     const tick = (now: number) => {
       if (!paused) {
         const elapsed = now - startRef.current;
-        if (elapsed > T.loop) {
-          startRef.current = now;
-          setT(0);
-        } else {
-          setT(elapsed);
-        }
+        setT(Math.min(elapsed, times.sent + 600));
       } else {
         startRef.current = now - t;
       }
@@ -69,27 +155,32 @@ const SeeItInAction = () => {
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current!);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paused]);
+  }, [paused, times.sent]);
 
-  const fullTyping = "/draft " + DRAFT;
   const typedCount = Math.max(
     0,
-    Math.min(fullTyping.length, Math.floor((t - T.startTyping) / T.perChar))
+    Math.min(fullTyping.length, Math.floor((t - times.startTyping) / PER_CHAR))
   );
   const typedText = fullTyping.slice(0, typedCount);
-  const showCaret = t > T.startTyping && t < T.showDraftCard;
+  const showCaret = t > times.startTyping && t < times.showDraftCard;
 
-  const showDraftCard = t > T.showDraftCard && t < T.rewriting;
-  const tonePicked = t > T.pickTone;
-  const relPicked = t > T.pickRel;
-  const rewritePressed = t > T.clickRewrite && t < T.rewriting + 150;
-  const rewriting = t > T.rewriting && t < T.showRewriteCard;
-  const showRewriteCard = t > T.showRewriteCard && t < T.sent;
-  const sendPressed = t > T.clickSend && t < T.sent + 150;
-  const showSent = t > T.sent;
+  const showDraftCard = t > times.showDraftCard && t < times.rewriting;
+  const tonePicked = t > times.pickTone;
+  const relPicked = t > times.pickRel;
+  const rewritePressed = t > times.clickRewrite && t < times.rewriting + 150;
+  const rewriting = t > times.rewriting && t < times.showRewriteCard;
+  const showRewriteCard = t > times.showRewriteCard && t < times.sent;
+  const sendPressed = t > times.clickSend && t < times.sent + 150;
+  const showSent = t > times.sent;
 
-  // After draft submitted, composer should be empty-ish
-  const composerDraft = t < T.showDraftCard ? typedText : "";
+  const composerDraft = t < times.showDraftCard ? typedText : "";
+
+  const next = () => setScenarioIndex((i) => (i + 1) % SCENARIOS.length);
+  const prev = () => setScenarioIndex((i) => (i - 1 + SCENARIOS.length) % SCENARIOS.length);
+  const replay = () => {
+    startRef.current = performance.now();
+    setT(0);
+  };
 
   return (
     <section
@@ -106,8 +197,8 @@ const SeeItInAction = () => {
           </h2>
           <div className="max-w-md space-y-4 font-body text-[15.5px] leading-relaxed text-muted-foreground">
             <p>
-              Type how it sounds in your head. SecondDraft rewrites it for the
-              tone and the person on the other end — then sends it as you.
+              Type how it sounds in your head. SecondDraft rewrites it for the tone
+              and the person on the other end — then sends it as you.
             </p>
             <ol className="space-y-2.5">
               <li className="flex gap-3">
@@ -115,9 +206,8 @@ const SeeItInAction = () => {
                   1
                 </span>
                 <span>
-                  Run{" "}
-                  <span className="font-mono text-foreground">/draft</span>{" "}
-                  with your rough message in any Slack channel.
+                  Run <span className="font-mono text-foreground">/draft</span> with
+                  your rough message in any Slack channel.
                 </span>
               </li>
               <li className="flex gap-3">
@@ -125,20 +215,21 @@ const SeeItInAction = () => {
                   2
                 </span>
                 <span>
-                  Pick a tone — Friendly, Direct, or Formal — and who you're
-                  writing to.
+                  Pick a tone — Friendly, Direct, or Formal — and who you're writing
+                  to.
                 </span>
               </li>
               <li className="flex gap-3">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">
                   3
                 </span>
-                <span>
-                  Send as you, edit first, or regenerate. Only you see the
-                  draft.
-                </span>
+                <span>Send as you, edit first, or regenerate. Only you see the draft.</span>
               </li>
             </ol>
+            <p className="pt-2 text-[13.5px] text-muted-foreground/80">
+              Click <span className="font-semibold text-foreground">Next →</span> on
+              the demo to watch a few real-world disasters get translated.
+            </p>
           </div>
         </div>
 
@@ -149,56 +240,52 @@ const SeeItInAction = () => {
             className="overflow-hidden rounded-2xl border border-hairline bg-card"
             style={{ boxShadow: "var(--shadow-lift)" }}
           >
-            <div className="flex h-[560px] flex-col md:h-[600px]">
-              {/* Slack-like channel header */}
+            <div className="flex h-[640px] flex-col md:h-[660px]">
               <div className="flex items-center justify-between border-b border-hairline bg-background px-4 py-2.5">
                 <div className="flex items-center gap-2">
-                  <span className="font-display text-[15px] font-bold text-foreground/80">
-                    #
-                  </span>
+                  <span className="font-display text-[15px] font-bold text-foreground/80">#</span>
                   <span className="font-display text-[14.5px] font-semibold text-foreground">
-                    general
+                    {scenario.channel}
                   </span>
                 </div>
-                <div className="text-[11px] text-muted-foreground">3 members</div>
+                <div className="text-[11px] text-muted-foreground">
+                  Scenario {scenarioIndex + 1} / {SCENARIOS.length} · {scenario.title}
+                </div>
               </div>
 
-              {/* Messages */}
               <div className="flex flex-1 flex-col justify-end gap-4 overflow-hidden bg-background px-4 py-4 md:px-6 md:py-5">
-                {/* Teammate message */}
                 <SlackMessage
-                  initials="J"
-                  name="Jordan"
-                  time="9:23 AM"
-                  avatarClass="bg-[#5B47E0] text-white"
+                  key={`incoming-${scenarioIndex}`}
+                  initials={scenario.incoming.initials}
+                  name={scenario.incoming.name}
+                  time={scenario.incoming.time}
+                  avatarClass={scenario.incoming.avatarClass}
                 >
-                  Hey! Did you get a chance to wrap up that thing we discussed
-                  last week? Needing it when you have a sec. Thanks!
+                  {scenario.incoming.body}
                 </SlackMessage>
 
-                {/* Ephemeral "Your draft" card */}
                 {showDraftCard && (
                   <EphemeralCard>
                     <div className="mb-1.5 font-display text-[13.5px] font-semibold text-foreground">
                       Your draft
                     </div>
                     <div className="mb-3 rounded-md border border-hairline bg-surface/60 px-3 py-2 font-mono text-[12.5px] text-foreground">
-                      {DRAFT}
+                      {scenario.draft}
                     </div>
                     <div className="mb-2.5 text-[11.5px] text-muted-foreground">
-                      <span className="italic">Only visible to you.</span> Pick
-                      tone and who you're writing to.
+                      <span className="italic">Only visible to you.</span> Pick tone and
+                      who you're writing to.
                     </div>
                     <div className="mb-3 flex flex-wrap gap-2">
                       <FakeSelect
                         placeholder="Tone"
-                        value={tonePicked ? SELECTED_TONE : undefined}
-                        active={t > T.showDraftCard && t < T.pickTone}
+                        value={tonePicked ? scenario.tone : undefined}
+                        active={t > times.showDraftCard && t < times.pickTone}
                       />
                       <FakeSelect
                         placeholder="Relationship"
-                        value={relPicked ? SELECTED_REL : undefined}
-                        active={t > T.pickTone && t < T.pickRel}
+                        value={relPicked ? scenario.relationship : undefined}
+                        active={t > times.pickTone && t < times.pickRel}
                       />
                     </div>
                     <button
@@ -211,19 +298,18 @@ const SeeItInAction = () => {
                   </EphemeralCard>
                 )}
 
-                {/* Ephemeral "Your rewrite" card */}
                 {showRewriteCard && (
                   <EphemeralCard>
                     <div className="mb-1.5 font-display text-[13.5px] font-semibold text-foreground">
                       Your rewrite —{" "}
                       <span className="font-normal text-muted-foreground">
-                        {SELECTED_TONE} · {SELECTED_REL}
+                        {scenario.tone} · {scenario.relationship}
                       </span>
                     </div>
                     <div className="mb-3 rounded-md border border-hairline bg-surface/60 px-3 py-2 font-mono text-[12.5px] leading-relaxed text-foreground">
-                      {REWRITTEN}
+                      {scenario.rewritten}
                     </div>
-                    <div className="mb-2.5 text-[11.5px] text-muted-foreground italic">
+                    <div className="mb-2.5 text-[11.5px] italic text-muted-foreground">
                       Sends to this channel as you when you click send.
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -241,42 +327,33 @@ const SeeItInAction = () => {
                   </EphemeralCard>
                 )}
 
-                {/* Final sent message from You */}
                 {showSent && (
                   <SlackMessage
-                    initials="G"
-                    name="Gida"
+                    initials="Y"
+                    name="You"
                     time="9:42 AM"
                     avatarClass="bg-primary text-primary-foreground"
                   >
-                    {REWRITTEN}
+                    {scenario.rewritten}
                   </SlackMessage>
                 )}
               </div>
 
-              {/* Composer */}
               <div className="border-t border-hairline bg-background px-4 py-3 md:px-5 md:py-3.5">
                 <div className="rounded-md border border-hairline bg-background">
-                  {/* Formatting bar */}
                   <div className="flex items-center gap-3 border-b border-hairline px-3 py-1.5 text-muted-foreground/70">
                     {["B", "I", "U", "S"].map((c) => (
-                      <span
-                        key={c}
-                        className="font-display text-[11px] font-semibold"
-                      >
+                      <span key={c} className="font-display text-[11px] font-semibold">
                         {c}
                       </span>
                     ))}
                     <span className="text-[11px]">🔗</span>
                   </div>
-                  {/* Input */}
                   <div className="flex min-h-[36px] items-center gap-1.5 px-3 py-2 font-body text-[14px]">
                     {rewriting ? (
                       <span className="flex items-center gap-2 text-muted-foreground">
                         <Dots />
-                        <span className="text-[13px]">
-                          SecondDraft is rewriting…
-                        </span>
+                        <span className="text-[13px]">SecondDraft is rewriting…</span>
                       </span>
                     ) : composerDraft ? (
                       <>
@@ -285,9 +362,7 @@ const SeeItInAction = () => {
                             <span className="rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[12px] font-semibold text-primary">
                               /draft
                             </span>
-                            <span className="text-foreground">
-                              {composerDraft.slice(6)}
-                            </span>
+                            <span className="text-foreground">{composerDraft.slice(6)}</span>
                           </>
                         ) : (
                           <span className="text-foreground">{composerDraft}</span>
@@ -298,10 +373,49 @@ const SeeItInAction = () => {
                       </>
                     ) : (
                       <span className="text-muted-foreground/60">
-                        Message #general
+                        Message #{scenario.channel}
                       </span>
                     )}
                   </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 border-t border-hairline bg-surface/40 px-4 py-2.5 md:px-5">
+                <button
+                  onClick={prev}
+                  className="rounded-md border border-hairline bg-background px-2.5 py-1 font-display text-[12px] font-semibold text-foreground/75 transition-colors hover:text-foreground"
+                  aria-label="Previous scenario"
+                >
+                  ← Prev
+                </button>
+                <div className="flex items-center gap-1.5">
+                  {SCENARIOS.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setScenarioIndex(i)}
+                      aria-label={`Go to scenario ${i + 1}`}
+                      className={`h-1.5 rounded-full transition-all ${
+                        i === scenarioIndex
+                          ? "w-5 bg-primary"
+                          : "w-1.5 bg-foreground/20 hover:bg-foreground/40"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={replay}
+                    className="rounded-md border border-hairline bg-background px-2.5 py-1 font-display text-[12px] font-semibold text-foreground/75 transition-colors hover:text-foreground"
+                  >
+                    Replay
+                  </button>
+                  <button
+                    onClick={next}
+                    className="rounded-md bg-primary px-3 py-1 font-display text-[12px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                    aria-label="Next scenario"
+                  >
+                    Next →
+                  </button>
                 </div>
               </div>
             </div>
@@ -333,14 +447,10 @@ const SlackMessage = ({
     </div>
     <div className="flex flex-col gap-0.5">
       <div className="flex items-baseline gap-2">
-        <span className="font-display text-[13.5px] font-bold text-foreground">
-          {name}
-        </span>
+        <span className="font-display text-[13.5px] font-bold text-foreground">{name}</span>
         <span className="text-[11px] text-muted-foreground">{time}</span>
       </div>
-      <p className="font-body text-[14px] leading-snug text-foreground/85">
-        {children}
-      </p>
+      <p className="font-body text-[14px] leading-snug text-foreground/85">{children}</p>
     </div>
   </div>
 );
@@ -390,7 +500,13 @@ const FakeSelect = ({
     <span className={value ? "text-foreground" : "text-muted-foreground"}>
       {value ?? placeholder}
     </span>
-    <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor" className="text-muted-foreground">
+    <svg
+      width="10"
+      height="10"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      className="text-muted-foreground"
+    >
       <path d="M5 7l5 6 5-6z" />
     </svg>
   </div>
