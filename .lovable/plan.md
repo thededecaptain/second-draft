@@ -1,80 +1,59 @@
-# SecondDraft — Premium redesign plan
+## See it in action — animated Slack demo
 
-Goal: lift the landing page from "cheap warm beige" to a Stripe/Notion-grade product page. Keep the same two-section structure (hero + before/after) and the same copy intent — change feel, palette, typography, and detail craft.
+Add a new landing section between `Hero` and `BeforeAfter` showing a looping, in-page Slack-style mockup that walks through the core flow: someone types a blunt message → invokes `/draft` → SecondDraft replies with a polished rewrite they can send.
 
-## Design direction (locked from your picks)
+### What the viewer sees (one ~9s loop)
 
-- **Palette — Stripe Cloud**
-  - Background `#ffffff`, surface `#f6f9fc`, ink `#0a2540`, accent indigo `#635bff`
-  - Muted ink for secondary text (slate-500-ish), hairline borders at very low opacity
-- **Type — Sora (display) + Manrope (body)**, loaded via `@fontsource` packages (no Google CDN, no `index.html` edits)
-- **Hero — asymmetric split**: headline + CTAs left, Slack rewrite demo card right
-- **Premium cues**: subtle multi-stop gradient washes behind hero and section transitions + crisp 1px hairlines everywhere structure needs definition
+```
+1. Slack window fades in (channel: #team-updates, avatars, header)
+2. User's draft types itself into the composer:
+   "hey can u fix the bug asap its blocking everyone"
+3. User types "/draft" → command chip appears with the SecondDraft icon
+4. Tone selector flashes: [Friendly] [Assertive] [Formal] — "Assertive" highlights
+5. Composer empties, a small "rewriting…" shimmer pulses for ~600ms
+6. Rewritten message slides in as a sent bubble:
+   "The bug is blocking the team — can you prioritize a fix today? Thanks."
+7. Subtle ✓ "Sent" confirmation, hold 1.2s, fade and loop
+```
 
-## What changes
+### Section layout
 
-### Tokens & foundation
-- Rewrite `src/index.css` with the new palette as HSL tokens, a `--gradient-hero` (soft indigo → cyan → white wash, Stripe-style), a refined `--shadow-soft` (tighter, cooler), and a `--shadow-lift` for hover.
-- Update `tailwind.config.ts` `fontFamily` to Sora / Manrope. Remove Plus Jakarta references.
-- Install fonts: `bun add @fontsource/sora @fontsource-variable/manrope` and import in `src/main.tsx`.
-- Remove Google Fonts `<link>` from `index.html` only if cleanup is trivial — otherwise leave (won't hurt).
+- Eyebrow: `See it in action`
+- Headline: `From rough thought to ready to send.`
+- Sub: one short line, ~12 words, no API/tech language
+- Right (or below on mobile): the animated Slack card, ~560px wide on desktop, with soft shadow, rounded-2xl, hairline border — matching the existing minimal aesthetic (no neon, no purple gradients)
 
-### Nav (`Nav.tsx`)
-- Switch dot+wordmark to a small monogram lockup, ink color, indigo dot.
-- Add a faint bottom hairline only when scrolled (or keep static hairline at 60% opacity).
-- Right side: `how it works`, `examples`, primary pill CTA `Add to Slack →` in indigo.
+### Motion approach
 
-### Hero (`Hero.tsx`)
-- Background: soft gradient wash (top-left indigo glow fading to white) layered behind the section, no dot texture.
-- Left column:
-  - Eyebrow micro-label in slate
-  - Headline in Sora, 64–76px, tight tracking, deep navy ink, period as indigo accent
-  - Subhead in Manrope, ~18px, slate-600
-  - CTAs: primary indigo pill with soft glow shadow; secondary ghost with hairline border
-  - Tiny trust row underneath ("Works in any Slack workspace · No data stored")
-- Right column — Slack demo card, leveled up:
-  - White card, 1px hairline, `--shadow-lift`, rounded-2xl
-  - Faux Slack header: avatar dot, name, "12:04 PM"
-  - "you typed" bubble in `#f6f9fc` with hairline
-  - Animated arrow/label divider
-  - "rewritten" bubble: white, indigo tone chip, subtle inner gradient border
-  - Footer row: `Copy` and `Send as you` ghost buttons with hairlines
+- Pure frontend, framer-motion (already permitted) driving a deterministic timeline via a single `useEffect` + `setInterval` step counter (0–6), each step triggers the next animation
+- Typewriter effect for the draft text (char-by-char, ~25ms/char)
+- Command chip uses spring scale-in
+- Tone pills stagger in, selected one gets primary ring
+- "Rewriting" state: 3 dots pulse + skeleton shimmer using existing `--primary` token
+- Sent bubble: slide up + fade, then ✓ check pops via spring
+- Loop restarts every ~9s; pause on hover so users can read
 
-### Before / After (`BeforeAfter.tsx`)
-- Section eyebrow: `What it looks like in practice`
-- Three columns, each is one polished "card pair":
-  - Tone chip (indigo tint) + context in slate
-  - Before: inset panel, `#f6f9fc`, hairline, strike-through faded text
-  - After: white card, hairline, `--shadow-soft`, Sora 17/24 ink copy
-- Add a faint vertical hairline between columns on desktop for rhythm.
+### Visual + token rules
 
-### Footer
-- Single hairline top border, wordmark left, minimal links right (Privacy, GitHub), small © line. No gradient.
+- Reuse existing semantic tokens only: `background`, `surface`, `card`, `foreground`, `muted-foreground`, `primary`, `hairline`, `shadow-soft`
+- Slack-style chrome is stylized (not a pixel-perfect Slack clone) — avoids trademark issues and stays on-brand
+- Avatars: two small circles using `bg-primary/15` and `bg-foreground/10` with initials, no external images
+- Fonts: existing `font-display` for the rewritten message, `font-body` for chat text, monospace for `/draft` chip
 
-### Page (`Index.tsx`)
-- Add the gradient wash as a fixed, low-opacity background layer behind `<main>` so section transitions feel continuous (Stripe trick).
+### Files
 
-### SEO / head
-- Update `<title>` and meta description to match the new positioning ("Say it right the first time. SecondDraft rewrites Slack messages in your tone."). One H1 (already true).
+- New: `src/components/landing/SeeItInAction.tsx` — the section + animated mockup (self-contained, ~200 lines)
+- Edit: `src/pages/Index.tsx` — insert `<SeeItInAction />` between `<Hero />` and `<BeforeAfter />`
 
-## Out of scope
-- No new sections (no pricing, no logos, no FAQ)
-- No backend, auth, or data work — frontend/presentation only
-- No changes to routing or `App.tsx`
+### Out of scope
 
-## Technical notes
-- All colors via semantic tokens — no raw `text-white`, `bg-[#...]` in components
-- Fonts via `@fontsource` only; do not touch `index.html` `<link>` tags or add CSS `@import`
-- Keep components small and presentational; reuse the existing file structure
-- Verify with the build after edits; spot-check the preview for the gradient + hairlines rendering cleanly on white
+- No real Slack API, no backend calls, no Lottie/MP4 — purely a styled React + framer-motion animation
+- No changes to Hero, BeforeAfter, Nav, Footer copy or design tokens
+- No new dependencies (framer-motion already in the project)
 
-## Files touched
-- `src/index.css` (rewrite tokens)
-- `tailwind.config.ts` (font families)
-- `src/main.tsx` (font imports)
-- `src/components/landing/Nav.tsx`
-- `src/components/landing/Hero.tsx`
-- `src/components/landing/BeforeAfter.tsx`
-- `src/components/landing/Footer.tsx`
-- `src/pages/Index.tsx` (gradient layer)
-- `index.html` (title/description only)
+### Acceptance
+
+- New section visible on `/` between Hero and BeforeAfter
+- Animation loops smoothly, pauses on hover, restarts on mouse leave
+- Mobile: stacks vertically, mockup scales to full width with no overflow
+- Lighthouse/visual regression: no layout shift, no console errors
