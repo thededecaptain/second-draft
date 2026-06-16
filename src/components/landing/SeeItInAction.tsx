@@ -92,19 +92,20 @@ const SCENARIOS: Scenario[] = [
     },
   },
   {
-    title: "Ghosted invoice",
-    draft: "bruh this client dipped on the invoice for 2 months, send the goons",
+    title: "Brain dump",
+    draft:
+      "wireframes almost done then design review then hi fi maybe like 1-2 days late but not a big deal i think",
     rewritten:
-      "Hi — following up on invoice #1042, now 60 days overdue. Could you confirm a payment date this week? Happy to resend the invoice if helpful.",
+      "We're on track — wireframes are nearly complete, and after the design review we'll move into hi-fi prototypes. We're looking at a minor delay of a day or two, but nothing that impacts the overall timeline.",
     tone: "Direct",
-    relationship: "Customer",
-    channel: "billing",
+    relationship: "Teammate",
+    channel: "product-updates",
     incoming: {
-      name: "Nadia (Finance)",
-      initials: "N",
+      name: "Jordan",
+      initials: "J",
       avatarClass: "bg-[#0F766E] text-white",
       time: "9:40 AM",
-      body: "FYI invoice #1042 is still outstanding — 60 days now. Can someone follow up?",
+      body: "Hey, quick update on the Q3 redesign?",
     },
   },
 ];
