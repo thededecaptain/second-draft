@@ -85,13 +85,44 @@ const SeeItInAction = () => {
         <div className="md:col-span-5">
           <div className="mb-3 micro-label">See it in action</div>
           <h2 className="mb-5 font-display text-3xl font-semibold tracking-tight text-foreground md:text-[40px] md:leading-[1.1]">
-            From rough thought to ready to send
+            One shortcut, three steps
             <span className="text-primary">.</span>
           </h2>
-          <p className="max-w-md font-body text-[15.5px] leading-relaxed text-muted-foreground">
-            Type the message you mean. Run <span className="font-mono text-foreground">/draft</span>,
-            pick a tone, and SecondDraft hands you a version you'll actually want to send.
-          </p>
+          <div className="max-w-md space-y-4 font-body text-[15.5px] leading-relaxed text-muted-foreground">
+            <p>
+              SecondDraft helps you find the right tone for every message.
+              One shortcut in Slack, and your rough draft becomes clear,
+              confident, and precisely on point.
+            </p>
+            <ol className="space-y-2.5">
+              <li className="flex gap-3">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">
+                  1
+                </span>
+                <span>
+                  Type your rough message in any channel — exactly how it sounds in your head.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">
+                  2
+                </span>
+                <span>
+                  Run{" "}
+                  <span className="font-mono text-foreground">/draft</span> and
+                  pick the tone you need — Friendly, Assertive, or Formal.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">
+                  3
+                </span>
+                <span>
+                  SecondDraft rewrites it in seconds. Send it as yourself when you're ready.
+                </span>
+              </li>
+            </ol>
+          </div>
         </div>
 
         <div className="md:col-span-7">
@@ -101,73 +132,115 @@ const SeeItInAction = () => {
             className="overflow-hidden rounded-2xl border border-hairline bg-card shadow-lift"
             style={{ boxShadow: "var(--shadow-lift)" }}
           >
-            {/* Window chrome */}
-            <div className="flex items-center gap-2 border-b border-hairline bg-surface/70 px-4 py-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-foreground/15" />
-              <span className="h-2.5 w-2.5 rounded-full bg-foreground/15" />
-              <span className="h-2.5 w-2.5 rounded-full bg-foreground/15" />
-              <div className="ml-3 flex items-center gap-2 text-[12px] text-muted-foreground">
-                <span className="font-mono text-foreground/70">#</span>
-                <span className="font-body">team-updates</span>
-              </div>
-            </div>
-
-            {/* Conversation */}
-            <div className="min-h-[340px] space-y-5 px-5 py-6 md:px-7 md:py-7">
-              {/* Teammate message */}
-              <Message
-                initials="JM"
-                name="Jordan"
-                time="10:42"
-                avatarClass="bg-foreground/10 text-foreground/70"
-              >
-                Any update on the checkout bug? It's hitting prod users.
-              </Message>
-
-              {/* Rewritten reply (after /draft) */}
-              <div
-                className={`flex justify-end transition-all duration-500 ${
-                  showReply
-                    ? "translate-y-0 opacity-100"
-                    : "pointer-events-none translate-y-2 opacity-0"
-                }`}
-              >
-                <div className="flex max-w-[78%] flex-col items-end gap-1.5">
-                  <div className="rounded-2xl rounded-br-sm border border-primary/15 bg-primary/5 px-4 py-3 shadow-soft">
-                    <p className="font-display text-[15px] leading-snug text-foreground">
-                      {REWRITTEN}
-                    </p>
+            {/* Slack-like layout */}
+            <div className="flex h-[420px] flex-col md:h-[480px]">
+              {/* Slack header */}
+              <div className="flex items-center justify-between border-b border-hairline bg-background px-4 py-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-display text-[15px] font-bold text-foreground">
+                    #
+                  </span>
+                  <div>
+                    <div className="font-display text-[14.5px] font-semibold leading-tight text-foreground">
+                      team-updates
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      Daily standups, blockers, and wins
+                    </div>
                   </div>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[9px] font-semibold text-primary">
+                    3
+                  </span>
+                  <span>members</span>
+                </div>
+              </div>
+
+              {/* Messages area */}
+              <div className="flex flex-1 overflow-hidden">
+                {/* Left sidebar — stylized Slack channels */}
+                <div className="hidden w-16 shrink-0 flex-col items-center gap-3 border-r border-hairline bg-surface/60 py-3 md:flex">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-[11px] font-bold text-primary">
+                    A
+                  </div>
+                  <div className="h-px w-8 bg-hairline" />
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-foreground/10 text-[9px] font-semibold text-foreground/70">
+                    #g
+                  </div>
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-[9px] font-semibold text-primary-foreground">
+                    #t
+                  </div>
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-foreground/10 text-[9px] font-semibold text-foreground/70">
+                    #d
+                  </div>
+                </div>
+
+                {/* Message list */}
+                <div className="flex flex-1 flex-col justify-end gap-5 bg-background px-5 py-5 md:px-6 md:py-6">
+                  {/* Teammate message */}
+                  <Message
+                    initials="JM"
+                    name="Jordan"
+                    time="10:42 AM"
+                    avatarClass="bg-foreground/10 text-foreground/70"
+                  >
+                    Any update on the checkout bug? It's hitting prod users.
+                  </Message>
+
+                  {/* User's rewritten message (appears after /draft) */}
                   <div
-                    className={`flex items-center gap-1.5 pr-1 text-[11px] text-muted-foreground transition-opacity duration-300 ${
-                      showSent ? "opacity-100" : "opacity-0"
+                    className={`flex items-start gap-3 transition-all duration-500 ${
+                      showReply
+                        ? "translate-y-0 opacity-100"
+                        : "pointer-events-none absolute translate-y-2 opacity-0"
                     }`}
                   >
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      className="text-primary"
-                    >
-                      <path
-                        d="M4 10.5 8 14.5 16 6"
-                        stroke="currentColor"
-                        strokeWidth="2.4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    Sent · 10:43
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/15 text-[11px] font-semibold text-primary">
+                      Y
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-display text-[13.5px] font-semibold text-foreground">
+                          You
+                        </span>
+                        <span className="text-[11px] text-muted-foreground">
+                          10:43 AM
+                        </span>
+                        <span
+                          className={`flex items-center gap-1 text-[11px] text-muted-foreground transition-opacity duration-300 ${
+                            showSent ? "opacity-100" : "opacity-0"
+                          }`}
+                        >
+                          <svg
+                            width="11"
+                            height="11"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            className="text-primary"
+                          >
+                            <path
+                              d="M4 10.5 8 14.5 16 6"
+                              stroke="currentColor"
+                              strokeWidth="2.4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          Sent
+                        </span>
+                      </div>
+                      <p className="font-body text-[14px] leading-snug text-foreground/80">
+                        {REWRITTEN}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Composer */}
-            <div className="border-t border-hairline bg-surface/40 px-4 py-3 md:px-5 md:py-4">
-              <div className="rounded-xl border border-hairline bg-background px-3.5 py-3 shadow-soft">
-                {/* Tone pills */}
+              {/* Composer */}
+              <div className="border-t border-hairline bg-surface/40 px-4 py-3 md:px-5 md:py-4">
+                {/* Tone selector — Slack-style suggestion bar */}
                 <div
                   className={`mb-2.5 flex flex-wrap items-center gap-1.5 transition-all duration-300 ${
                     showTones && !showReply
@@ -200,28 +273,32 @@ const SeeItInAction = () => {
                   })}
                 </div>
 
-                {/* Input line */}
-                <div className="flex min-h-[28px] items-center gap-2 font-body text-[14px]">
-                  {rewriting ? (
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <Dots />
-                      <span className="text-[13px]">SecondDraft is rewriting…</span>
-                    </span>
-                  ) : showReply ? (
-                    <span className="text-muted-foreground/60">Message #team-updates</span>
-                  ) : (
-                    <>
-                      {showCommand && (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-1.5 py-0.5 font-mono text-[12px] font-semibold text-primary">
-                          /draft
-                        </span>
-                      )}
-                      <span className="text-foreground">{typedText}</span>
-                      {showCaret && (
-                        <span className="inline-block h-[15px] w-[1.5px] animate-pulse bg-foreground/70" />
-                      )}
-                    </>
-                  )}
+                {/* Input box */}
+                <div className="rounded-lg border border-hairline bg-background px-3.5 py-2.5 shadow-soft">
+                  <div className="flex min-h-[28px] items-center gap-2 font-body text-[14px]">
+                    {rewriting ? (
+                      <span className="flex items-center gap-2 text-muted-foreground">
+                        <Dots />
+                        <span className="text-[13px]">SecondDraft is rewriting…</span>
+                      </span>
+                    ) : showReply ? (
+                      <span className="text-muted-foreground/60">
+                        Message #team-updates
+                      </span>
+                    ) : (
+                      <>
+                        {showCommand && (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-1.5 py-0.5 font-mono text-[12px] font-semibold text-primary">
+                            /draft
+                          </span>
+                        )}
+                        <span className="text-foreground">{typedText}</span>
+                        {showCaret && (
+                          <span className="inline-block h-[15px] w-[1.5px] animate-pulse bg-foreground/70" />
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
