@@ -1,5 +1,6 @@
 import Nav from "@/components/landing/Nav";
 import Hero from "@/components/landing/Hero";
+import SeeItInAction from "@/components/landing/SeeItInAction";
 import BeforeAfter from "@/components/landing/BeforeAfter";
 import Footer from "@/components/landing/Footer";
 
@@ -8,6 +9,7 @@ const Index = () => (
     <Nav />
     <main>
       <Hero />
+      <SeeItInAction />
       <BeforeAfter />
     </main>
     <Footer />
